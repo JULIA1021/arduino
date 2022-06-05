@@ -39,79 +39,79 @@ void recv_cb(const uint8_t *macaddr, const uint8_t *data, int  )  //定義recv_c
   /*
   if (!esp_now_is_peer_exist(macaddr)) //不存在於macaddr
   {
-    Serial.println("adding peer ");
-    esp_now_add_peer(macaddr, ESP_NOW_ROLE_COMBO, WIFI_CHANNEL, NULL, 0);
+    Serial.println("adding peer ");     
+    esp_now_add_peer(macaddr, ESP_NOW_ROLE_COMBO, WIFI_CHANNEL, NULL, 0);  //執行 esp_now_add_peer(to add the device to the paired device list before you send data to this device)
     peernum++;
   }
   */
 };
 
-#define ACCRESO 4096
+#define ACCRESO 4096      //定義變數
 #define CYCLETIME 3
 #define MINTHROTTLE 1090
 #define MIDRUD 1495
 #define THRCORR 19
 
-enum ang { ROLL,PITCH,YAW };  //enum
+enum ang { ROLL,PITCH,YAW };  //enum(列舉主要是用在宣告僅有少數值的型別，像是一星期內的日期)此處ROLL(翻滾),PITCH(俯仰),YAW(偏擺)
 
-static int16_t gyroADC[3];
+static int16_t gyroADC[3];    //static可以控制變數的可見範圍
 static int16_t accADC[3];
 static int16_t gyroData[3];
 static float angle[2]    = {0,0};  
-extern int calibratingA;
+extern int calibratingA;       //變數要在多個檔案之間共用時用extern 
 
-#ifdef flysky
+#ifdef flysky     //處理程序指令檢查宏是否由#define定義
   #define ROL 0
   #define PIT 1
   #define THR 2
   #define RUD 3
-#else //orangerx
+#else //orangerx   //#ifdef若不執行 則else下執行
   #define ROL 1
   #define PIT 2
   #define THR 0
   #define RUD 3
 #endif
 
-#define AU1 4
+#define AU1 4    
 #define AU2 5
-static int16_t rcCommand[] = {0,0,0};
+static int 16_t rcCommand[] = {0,0,0};    //static可以控制變數的可見範圍
 
 #define GYRO     0
 #define STABI    1
-static int8_t flightmode;
-static int8_t oldflightmode;
+static int8_t flightmode;          //static可以控制變數的可見範圍  (  int8_t:typedef signed char)
+static int8_t oldflightmode;       
 
-boolean armed = false;
-uint8_t armct = 0;
+boolean armed = false;   //
+uint8_t armct = 0;      //uint8_t: typedef unsigned char
 int debugvalue = 0;
 
 void setup() 
 {
-  Serial.begin(115200); Serial.println();
+  Serial.begin(115200); Serial.println();   //序列埠使用115200 且println
 
   delay(3000); // give it some time to stop shaking after battery plugin
-  MPU6050_init();
+  MPU6050_init();   //執行MPU6050_init()
   MPU6050_readId(); // must be 0x68, 104dec
   
-  EEPROM.begin(64);
-  if (EEPROM.read(63) != 0x55) Serial.println("Need to do ACC calib");
-  else ACC_Read(); // eeprom is initialized
-  if (EEPROM.read(62) != 0xAA) Serial.println("Need to check and write PID");
-  else PID_Read(); // eeprom is initialized
+  EEPROM.begin(64);  // 將那部分內存分配給RAM ，size 必須介於 0 和 4096
+  if (EEPROM.read(63) != 0x55) Serial.println("Need to do ACC calib");   //當EEPROM.read(63) 不等於0x55 顯示Need to do ACC calib
+     else ACC_Read(); // eeprom is initialized                           //等於0x55 ，則執行ACC_Read()
+  if (EEPROM.read(62) != 0xAA) Serial.println("Need to check and write PID");    //當EEPROM.read(62)  不等於0xAA   顯示Need to check and write PID
+     else PID_Read(); // eeprom is initialized                              //等於0xAA5 ，則執行PID_Read()    
 
   
-  WiFi.mode(WIFI_STA); // Station mode for esp-now 
-  #if defined webServer
-    setupwebserver();
+  WiFi.mode(WIFI_STA); // Station mode for esp-now   //以工作站（Station）模式啟動，ESP32用來上網讀取資料
+  #if defined webServer  
+    setupwebserver();     // 若webServer被定義，則執行setupwebserver()
     delay(500); 
   #endif
 
 
   #if defined externRC
-    init_RC();
+   init_RC();           // 若externRC被定義，則執行init_RC()
   #else
-    Serial.printf("This mac: %s, ", WiFi.macAddress().c_str()); 
-    Serial.printf(", channel: %i\n", WIFI_CHANNEL); 
+    Serial.printf("This mac: %s, ", WiFi.macAddress().c_str());    //若externRC未被定義，則顯示字串，且
+    Serial.printf(", channel: %i\n", WIFI_CHANNEL);   
     if (esp_now_init() != 0) Serial.println("*** ESP_Now init failed");
     esp_now_register_recv_cb(recv_cb);
   #endif
