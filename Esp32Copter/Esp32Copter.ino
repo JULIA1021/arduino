@@ -1,18 +1,18 @@
-#include <esp_now.h>
+#include <esp_now.h>       //引用函示庫
 #include <WiFi.h>
 #include <Wire.h>
 #include <EEPROM.h>
 
 #include "RC.h"
 
-#define WIFI_CHANNEL 4
-#define PWMOUT  // normal esc, uncomment for serial esc
+#define WIFI_CHANNEL 4                                          //定義變數(8~13)
+#define PWMOUT  // normal esc, uncomment for serial esc            
 #define LED 2
 #define CALSTEPS 256 // gyro and acc calibration steps
 //#define externRC // use of external RC receiver in ppmsum mode
 //#define webServer // use of webserver to change PID
 
-extern int16_t accZero[3];
+extern int16_t accZero[3];     //變數要在多個檔案之間共用時用extern ，且15~23宣告變數
 extern float yawRate;
 extern float rollPitchRate;
 extern float P_PID;
@@ -22,21 +22,22 @@ extern float P_Level_PID;
 extern float I_Level_PID;
 extern float D_Level_PID;
 
-volatile boolean recv;
+volatile boolean recv;    //volatile用來提醒編譯器它後面所定義的變數隨時有可能改變，因此編譯後的程式每次需要儲存或讀取這個變數的時候，都會直接從變數位址中讀取資料
 //volatile int peernum = 0;
 //esp_now_peer_info_t slave;
 
-void recv_cb(const uint8_t *macaddr, const uint8_t *data, int len)
+void recv_cb(const uint8_t *macaddr, const uint8_t *data, int  )  //定義recv_cb函式
 {
   recv = true;
-  //Serial.print("recv_cb ");
-  //Serial.println(len); 
-  if (len == RCdataSize) 
+  //Serial.print("recv_cb ");把資料列印到Serial port
+  //Serial.println(len); 把資料列印到Serial port 在資料尾端加上換行字元
+  if (len == RCdataSize)     //當len == RCdataSize執行迴圈
   {
-    for (int i=0;i<RCdataSize;i++) RCdata.data[i] = data[i];
+    for (int i=0;i<RCdataSize;i++)
+         RCdata.data[i] = data[i];
   }
   /*
-  if (!esp_now_is_peer_exist(macaddr))
+  if (!esp_now_is_peer_exist(macaddr)) //不存在於macaddr
   {
     Serial.println("adding peer ");
     esp_now_add_peer(macaddr, ESP_NOW_ROLE_COMBO, WIFI_CHANNEL, NULL, 0);
@@ -51,7 +52,7 @@ void recv_cb(const uint8_t *macaddr, const uint8_t *data, int len)
 #define MIDRUD 1495
 #define THRCORR 19
 
-enum ang { ROLL,PITCH,YAW };
+enum ang { ROLL,PITCH,YAW };  //enum
 
 static int16_t gyroADC[3];
 static int16_t accADC[3];
