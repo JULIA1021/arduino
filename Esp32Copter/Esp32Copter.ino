@@ -112,8 +112,8 @@ void setup()
   #else
     Serial.printf("This mac: %s, ", WiFi.macAddress().c_str());    //若externRC未被定義，則顯示字串，且
     Serial.printf(", channel: %i\n", WIFI_CHANNEL);   
-    if (esp_now_init() != 0) Serial.println("*** ESP_Now init failed");
-    esp_now_register_recv_cb(recv_cb);
+    if (esp_now_init() != 0) Serial.println("*** ESP_Now init failed");   
+    esp_now_register_recv_cb(recv_cb);     
   #endif
 
   delay(500); 
