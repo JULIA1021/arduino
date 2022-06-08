@@ -243,7 +243,7 @@ void loop()
       if (n == 3)
       {
         n = readsernum();        
-        if      (ch == 'p') { P_PID       = float(n) * 0.01 + 0.004; Serial.print("pid P ");       Serial.print(P_PID); }
+        if      (ch == 'p') { P_PID       = float(n) * 0.01 + 0.004; Serial.print("pid P ");       Serial.print(P_PID); }         
         else if (ch == 'i') { I_PID       = float(n) * 0.01 + 0.004; Serial.print("pid I ");       Serial.print(I_PID); }
         else if (ch == 'd') { D_PID       = float(n) * 0.01 + 0.004; Serial.print("pid D ");       Serial.print(D_PID); }
         else if (ch == 'P') { P_Level_PID = float(n) * 0.01 + 0.004; Serial.print("pid Level P "); Serial.print(P_Level_PID); }
@@ -253,16 +253,16 @@ void loop()
       }
       else if (ch == 'S') { PID_Store(); Serial.print("stored in EEPROM"); }
       else 
-      {
-        Serial.println("Input format wrong");
-        Serial.println("Wpxx, Wixx, Wdxx - write gyro PID, example: Wd13");
-        Serial.println("WPxx, WIxx, WDxx - write level PID, example: WD21");
+      { 
+        Serial.println("Input format wrong");                                    //print出字元
+        Serial.println("Wpxx, Wixx, Wdxx - write gyro PID, example: Wd13");      //print出字元
+        Serial.println("WPxx, WIxx, WDxx - write level PID, example: WD21");     //print出字元
       }
     }
     else if (ch >= '0' && ch <='9') debugvalue = ch -'0';
     else
     {
-      Serial.println("A - acc calib");
+      Serial.println("A - acc calib");                                            //print出字元
       Serial.println("D - write default PID");
       Serial.println("R - read actual PID");
       Serial.println("Wpxx, Wixx, Wdxx - write gyro PID");
