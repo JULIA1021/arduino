@@ -111,41 +111,41 @@ void setup()
    init_RC();           // 若externRC被定義，則執行init_RC()
   #else
     Serial.printf("This mac: %s, ", WiFi.macAddress().c_str());    //若externRC未被定義，則顯示字串，且
-    Serial.printf(", channel: %i\n", WIFI_CHANNEL);   
-    if (esp_now_init() != 0) Serial.println("*** ESP_Now init failed");   
-    esp_now_register_recv_cb(recv_cb);     
+    Serial.printf(", channel: %i\n", WIFI_CHANNEL);                //顯示字串
+    if (esp_now_init() != 0) Serial.println("*** ESP_Now init failed");   //初始化esp
+        esp_now_register_recv_cb(recv_cb);     //執行Receiving ESP-NOW Data
   #endif
 
   delay(500); 
-  pinMode(LED,OUTPUT);
-  digitalWrite(LED,LOW);
-  initServo();
+  pinMode(LED,OUTPUT);      //所要閃爍的LED
+  digitalWrite(LED,LOW);    //設定LED腳位為低電位
+  initServo();              //初始化
 }
 
 uint32_t rxt; // receive time, used for falisave
 
 void loop() 
 {
-  uint32_t now,mnow,diff; 
-  now = millis(); // actual time
-  if (debugvalue == 5) mnow = micros();
+  uint32_t now,mnow,diff;         // unsigned int now,mnow,diff
+  now = millis();                // actual time
+  if (debugvalue == 5) mnow = micros();  //當debugvalue=5則mnow = micros()
 
   #if defined webServer
-    loopwebserver();
+    loopwebserver();              //執行loopwebserver();
   #endif
 
-  if (recv)
+  if (recv)                      //若接收到
   {
-    recv = false;  
-    #if !defined externRC  
-      buf_to_rc();
+    recv = false;                 
+    #if !defined externRC         //若externRC 不定義               
+      buf_to_rc();                //執行buf_to_rc()
     #endif
 
-    if (debugvalue == 4) Serial.printf("%4d %4d %4d %4d \n", rcValue[0], rcValue[1], rcValue[2], rcValue[3]); 
+    if (debugvalue == 4) Serial.printf("%4d %4d %4d %4d \n", rcValue[0], rcValue[1], rcValue[2], rcValue[3]);  //若debugvalue=4則顯示字串
   
-    if      (rcValue[AU1] < 1300) flightmode = GYRO;
-    else                          flightmode = STABI;   
-    if (oldflightmode != flightmode)
+    if      (rcValue[AU1] < 1300) flightmode = GYRO;   //若rcValue[AU1] < 1300 則flightmode = GYRO
+    else                          flightmode = STABI;   //若rcValue[AU1] >1300 則flightmode = STABI
+    if (oldflightmode != flightmode)     //
     {
       zeroGyroAccI();
       oldflightmode = flightmode;
