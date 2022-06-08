@@ -145,40 +145,40 @@ void loop()
   
     if      (rcValue[AU1] < 1300) flightmode = GYRO;   //若rcValue[AU1] < 1300 則flightmode = GYRO
     else                          flightmode = STABI;   //若rcValue[AU1] >1300 則flightmode = STABI
-    if (oldflightmode != flightmode)     //
+    if (oldflightmode != flightmode)     //若oldflightmode != flightmode
     {
-      zeroGyroAccI();
-      oldflightmode = flightmode;
+      zeroGyroAccI();                    //執行zeroGyroAccI()
+      oldflightmode = flightmode;        //oldflightmode = flightmode
     }
 
     if (armed) 
     {
-      rcValue[THR]    -= THRCORR;
-      rcCommand[ROLL]  = rcValue[ROL] - MIDRUD;
+      rcValue[THR]    -= THRCORR;                  //rcValue[THR]=rcValue[THR]-THRCORR
+      rcCommand[ROLL]  = rcValue[ROL] - MIDRUD;    
       rcCommand[PITCH] = rcValue[PIT] - MIDRUD;
       rcCommand[YAW]   = rcValue[RUD] - MIDRUD;
     }  
     else
     {  
-      if (rcValue[THR] < MINTHROTTLE) armct++;
+      if (rcValue[THR] < MINTHROTTLE) armct++;    //若rcValue[THR] < MINTHROTTLE 則代先取armct的值再另armct=armct+1
       if (armct >= 25) 
       { 
-        digitalWrite(LED,HIGH); 
+        digitalWrite(LED,HIGH);                   //若armct >= 25 設定LED腳位為高電位
         armed = true;
       }
     }
 
-    if (debugvalue == 5) Serial.printf("RC input ms: %d\n",now - rxt);
-    rxt = millis();
+    if (debugvalue == 5) Serial.printf("RC input ms: %d\n",now - rxt);       //若debugvalue = 5 則顯示字串
+    rxt = millis();                                                          //且令rxt = millis()
   }
 
-  Gyro_getADC();
+  Gyro_getADC();                //獲取角速度數據                                              
   
-  ACC_getADC();
+  ACC_getADC();                 //有加速度傳感器
 
-  getEstimatedAttitude();
+  getEstimatedAttitude();       //估計姿態函数 
 
-  pid();
+  pid();                        
 
   mix();
 
