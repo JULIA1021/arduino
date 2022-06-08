@@ -172,47 +172,47 @@ void loop()
     rxt = millis();                                                          //且令rxt = millis()
   }
 
-  Gyro_getADC();                //獲取角速度數據                                              
+  Gyro_getADC();                //執行獲取角速度數據                                              
   
-  ACC_getADC();                 //有加速度傳感器
+  ACC_getADC();                 //執行有加速度傳感器
 
-  getEstimatedAttitude();       //估計姿態函数 
+  getEstimatedAttitude();       //執行估計姿態函数 
 
-  pid();                        
+  pid();                        //執行pid控制器
 
-  mix();
+  mix();                       //執行mix()
 
-  writeServo();
+  writeServo();                //執行writeServo()
   
   // Failsave part
-  if (now > rxt+90)
+  if (now > rxt+90)         
   {
-    rcValue[THR] = MINTHROTTLE;
-    if (debugvalue == 5) Serial.printf("RC Failsafe after %d \n",now-rxt);
+    rcValue[THR] = MINTHROTTLE;                                                     //若now > rxt+90 則令 rcValue[THR] 等於 MINTHROTTLE
+    if (debugvalue == 5) Serial.printf("RC Failsafe after %d \n",now-rxt);          //若debugvalue = 5 ，則顯示字串，且令rxt = now
     rxt = now;
   }
 
   // parser part
-  if (Serial.available())
+  if (Serial.available())                  
   {
-    char ch = Serial.read();
+    char ch = Serial.read();              //令ch = 讀出來的字  
     // Perform ACC calibration
-    if (ch == 10) Serial.println();
-    else if (ch == 'A')
+    if (ch == 10) Serial.println();      //若ch=10 顯示
+    else if (ch == 'A')                  //若ch=A
     { 
-      Serial.println("Doing ACC calib");
-      calibratingA = CALSTEPS;
-      while (calibratingA != 0)
+      Serial.println("Doing ACC calib");  //顯示Doing ACC calib
+      calibratingA = CALSTEPS;            //令calibratingA = CALSTEPS
+      while (calibratingA != 0)           
       {
         delay(CYCLETIME);
-        ACC_getADC(); 
+        ACC_getADC();                      //若calibratingA != 0則延遲 並執行有加速度傳感器
       }
-      ACC_Store();
-      Serial.println("ACC calib Done");
+      ACC_Store();                         //執行ACC_Store()
+      Serial.println("ACC calib Done");    //顯示字元
     }
-    else if (ch == 'R')
+    else if (ch == 'R')                    //若ch=R
     {
-      Serial.print("Act Rate :  ");
+      Serial.print("Act Rate :  ");                       //print出字元
       Serial.print(yawRate); Serial.print("  ");
       Serial.print(rollPitchRate); Serial.println();
       Serial.println("Act PID :");
@@ -223,9 +223,9 @@ void loop()
       Serial.print(I_Level_PID); Serial.print("  ");
       Serial.print(D_Level_PID); Serial.println();
     }
-    else if (ch == 'D')
+    else if (ch == 'D')                            
     {
-      Serial.println("Loading default PID");
+      Serial.println("Loading default PID");                    //若ch=D 則print
       yawRate = 6.0;
       rollPitchRate = 5.0;
       P_PID = 0.15;    // P8
