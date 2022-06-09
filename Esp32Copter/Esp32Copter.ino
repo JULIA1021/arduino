@@ -259,7 +259,7 @@ void loop()
         Serial.println("WPxx, WIxx, WDxx - write level PID, example: WD21");     //print出字元
       }
     }
-    else if (ch >= '0' && ch <='9') debugvalue = ch -'0';                        //若ch在0~9之間
+    else if (ch >= '0' && ch <='9') debugvalue = ch -'0';                        //若ch在0~9之間 則將Ch的值剪掉0的ASCII
     else
     {
       Serial.println("A - acc calib");                                            //print出字元
