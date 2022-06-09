@@ -228,15 +228,15 @@ void loop()
       Serial.println("Loading default PID");                    //若ch=D 則print
       yawRate = 6.0;
       rollPitchRate = 5.0;
-      P_PID = 0.15;    // P8
-      I_PID = 0.00;    // I8
+      P_PID = 0.15;                                   // P8
+      I_PID = 0.00;                                   // I8
       D_PID = 0.08; 
-      P_Level_PID = 0.35;   // P8
-      I_Level_PID = 0.00;   // I8
+      P_Level_PID = 0.35;                            // P8
+      I_Level_PID = 0.00;                            // I8
       D_Level_PID = 0.10;
-      PID_Store();
+      PID_Store();                                  //執行PID_Store()
     }
-    else if (ch == 'W')
+    else if (ch == 'W')                   
     {
       char ch = Serial.read();                 //若ch = W 則令ch = Serial.read()
       int n = Serial.available();              //且n = Serial.available()  
@@ -251,7 +251,7 @@ void loop()
         else if (ch == 'D') { D_Level_PID = float(n) * 0.01 + 0.004; Serial.print("pid Level D "); Serial.print(D_Level_PID); }      //print出字元
         else Serial.println("unknown command");                                                                                      //print出字元
       }
-      else if (ch == 'S') { PID_Store(); Serial.print("stored in EEPROM"); }    
+      else if (ch == 'S') { PID_Store(); Serial.print("stored in EEPROM"); }     //若ch = S 則執行 PID_Store() 且print字串
       else 
       { 
         Serial.println("Input format wrong");                                    //print出字元
@@ -259,7 +259,7 @@ void loop()
         Serial.println("WPxx, WIxx, WDxx - write level PID, example: WD21");     //print出字元
       }
     }
-    else if (ch >= '0' && ch <='9') debugvalue = ch -'0';
+    else if (ch >= '0' && ch <='9') debugvalue = ch -'0';                        //若ch在0~9之間
     else
     {
       Serial.println("A - acc calib");                                            //print出字元
@@ -278,24 +278,24 @@ void loop()
     }
   }
 
-  if      (debugvalue == 1) Serial.printf("%4d %4d %4d \n", gyroADC[0], gyroADC[1], gyroADC[2]);  
-  else if (debugvalue == 2) Serial.printf("%5d %5d %5d \n", accADC[0], accADC[1], accADC[2]);
-  else if (debugvalue == 3) Serial.printf("%3f %3f \n", angle[0], angle[1]); 
+  if      (debugvalue == 1) Serial.printf("%4d %4d %4d \n", gyroADC[0], gyroADC[1], gyroADC[2]);        //若debugvalue = 1 則顯示gyroADC 陣列
+  else if (debugvalue == 2) Serial.printf("%5d %5d %5d \n", accADC[0], accADC[1], accADC[2]);           //若debugvalue = 2 則顯示accADC 陣列
+  else if (debugvalue == 3) Serial.printf("%3f %3f \n", angle[0], angle[1]);                            //若debugvalue = 3 則顯示angle 陣列
   
   delay(CYCLETIME-1);  
 
-  if (debugvalue == 5) 
+  if (debugvalue == 5)                    
   {
-    diff = micros() - mnow;
-    Serial.println(diff); 
+    diff = micros() - mnow;            //若debugvalue = 5 則令diff = micros() - mnow
+    Serial.println(diff);              //print出字元    
   }
 }
 
 int readsernum()
 {
-  int num;
-  char numStr[3];  
-  numStr[0] = Serial.read();
+  int num;                              //宣告變數num
+  char numStr[3];                       //宣告陣列
+  numStr[0] = Serial.read();            //分別令 numStr[0]、numStr[1] =Serial.read()
   numStr[1] = Serial.read();
-  return atol(numStr);
+  return atol(numStr);                   //結束函式且將atol(numStr)返回到函数外面
 }
