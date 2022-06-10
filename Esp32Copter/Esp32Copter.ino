@@ -143,15 +143,15 @@ void loop()
 
     if (debugvalue == 4) Serial.printf("%4d %4d %4d %4d \n", rcValue[0], rcValue[1], rcValue[2], rcValue[3]);  //若debugvalue=4則顯示字串
   
-    if      (rcValue[AU1] < 1300) flightmode = GYRO;   //若rcValue[AU1] < 1300 則flightmode = GYRO
-    else                          flightmode = STABI;   //若rcValue[AU1] >1300 則flightmode = STABI
-    if (oldflightmode != flightmode)     //若oldflightmode != flightmode
+    if      (rcValue[AU1] < 1300) flightmode = GYRO;   //若rcValue[AU1] < 1300 則flightmode = GYRO，設定成重力模式
+    else                          flightmode = STABI;   //若rcValue[AU1] >1300 則flightmode = STABI，設定成穩定模式
+    if (oldflightmode != flightmode)     //若原本的飛行模式不等於新的
     {
-      zeroGyroAccI();                    //執行zeroGyroAccI()
+      zeroGyroAccI();                     //歸零重力加速度
       oldflightmode = flightmode;        //oldflightmode = flightmode
     }
 
-    if (armed) 
+    if (armed)             //如果有配備的話
     {
       rcValue[THR]    -= THRCORR;                  //rcValue[THR]=rcValue[THR]-THRCORR
       rcCommand[ROLL]  = rcValue[ROL] - MIDRUD;    
@@ -192,11 +192,11 @@ void loop()
     rxt = now;
   }
 
-  // parser part
-  if (Serial.available())                  
+  // parser part   //數據解析
+  if (Serial.available())                //如果Serial.available()是true則執行  
   {
     char ch = Serial.read();              //令ch = 讀出來的字  
-    // Perform ACC calibration
+    // Perform ACC calibration             //加速度校準
     if (ch == 10) Serial.println();      //若ch=10 顯示
     else if (ch == 'A')                  //若ch=A
     { 
@@ -204,10 +204,10 @@ void loop()
       calibratingA = CALSTEPS;            //令calibratingA = CALSTEPS
       while (calibratingA != 0)           
       {
-        delay(CYCLETIME);
+        delay(CYCLETIME);                   //延遲一循環時間
         ACC_getADC();                      //若calibratingA != 0則延遲 並執行有加速度傳感器
-      }
-      ACC_Store();                         //執行ACC_Store()
+      }                                    
+      ACC_Store();                        //儲存加速度值
       Serial.println("ACC calib Done");    //顯示字元
     }
     else if (ch == 'R')                    //若ch=R
@@ -234,7 +234,7 @@ void loop()
       P_Level_PID = 0.35;                            // P8
       I_Level_PID = 0.00;                            // I8
       D_Level_PID = 0.10;
-      PID_Store();                                  //執行PID_Store()
+      PID_Store();                                  //儲存PID值
     }
     else if (ch == 'W')                   
     {
